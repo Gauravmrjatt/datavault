@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { useAuth } from "@/contexts/auth-context";
 
-const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "http://localhost:5000"
+const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "https://datahub.dream10.in"
 export default function UploadFile() {
   const [selectedFile, setSelectedFile] = useState(null)
   const [isUploading, setIsUploading] = useState(false)

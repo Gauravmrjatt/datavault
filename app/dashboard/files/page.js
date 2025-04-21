@@ -25,7 +25,7 @@ const Skeleton = ({ className }) => (
   <div className={`animate-pulse bg-muted ${className}`} />
 )
 
-const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "http://localhost:5000";
+const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "https://datahub.dream10.in";
 // Utility function to format file size
 function formatFileSize(sizeInBytes) {
   if (sizeInBytes === 0) return '0 B'

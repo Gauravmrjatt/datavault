@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext({})
-const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "http://localhost:5000"
+const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "https://datahub.dream10.in"
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
