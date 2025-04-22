@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { ArrowRight, FileText, Shield, Upload } from "lucide-react"
+import { ArrowRight, FileText, Shield, Upload, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export default function Home() {
   return (
@@ -11,7 +12,34 @@ export default function Home() {
           <FileText className="h-6 w-6 mr-2" />
           <span className="font-bold text-xl">DataVault</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="ml-auto md:hidden">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle navigation menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right">
+            <nav className="flex flex-col gap-4">
+              <Link href="/features" className="text-sm font-medium hover:underline underline-offset-4">
+                Features
+              </Link>
+              <Link href="/pricing" className="text-sm font-medium hover:underline underline-offset-4">
+                Pricing
+              </Link>
+              <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4">
+                About
+              </Link>
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/auth/login">Login</Link>
+              </Button>
+              <Button asChild className="w-full">
+                <Link href="/auth/register">Sign Up</Link>
+              </Button>
+            </nav>
+          </SheetContent>
+        </Sheet>
+        <nav className="ml-auto hidden md:flex gap-4 sm:gap-6 items-center">
           <Link href="/features" className="text-sm font-medium hover:underline underline-offset-4">
             Features
           </Link>
@@ -22,7 +50,7 @@ export default function Home() {
             About
           </Link>
           {/* <ThemeToggle /> */}
-          <Button asChild variant="outline" className="hidden sm:flex">
+          <Button asChild variant="outline">
             <Link href="/auth/login">Login</Link>
           </Button>
           <Button asChild>
@@ -52,7 +80,7 @@ export default function Home() {
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline">
-                    <Link href="/features">Learn More</Link>
+                    <Link href="/">Learn More</Link>
                   </Button>
                 </div>
               </div>
@@ -119,7 +147,7 @@ export default function Home() {
             </div>
             <div className="mx-auto w-full max-w-sm space-y-2">
               <Button asChild className="w-full" size="lg">
-                <Link href="/register">Sign Up Now</Link>
+                <Link href="/auth/register">Sign Up Now</Link>
               </Button>
               <p className="text-xs text-muted-foreground">No credit card required.</p>
             </div>
