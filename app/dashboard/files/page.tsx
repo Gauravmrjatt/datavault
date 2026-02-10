@@ -350,7 +350,7 @@ export default function DriveFilesPage() {
         currentFolderId={currentFolderId}
       />
 
-      <div className="flex-1 overflow-hidden px-4 pb-4">
+      <div className="flex-1 overflow-hidden pb-4">
         <DropZone onDrop={handleUpload} className="flex h-full flex-col gap-4">
              {/* Breadcrumbs */}
              <div className="flex items-center gap-2">
@@ -416,10 +416,12 @@ export default function DriveFilesPage() {
             )}
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-2">
+            <div className="flex-1 overflow-y-auto ">
                  {filteredItems.files.length === 0 && filteredItems.folders.length === 0 ? (
-                    <div className="flex h-full items-center justify-center p-8">
-                        <FileDropzone onFilesDropped={handleUpload} className="max-w-2xl w-full" />
+                    <div className="flex h-full items-center justify-center flex-col ">
+                        {/* <FileDropzone onFilesDropped={handleUpload} className="max-w-2xl w-full" /> */}
+                        <img src="/empty.svg" alt="Empty" className="max-w-[500px] w-full h-full object-contain" />
+                        
                     </div>
                  ) : (
                     view === 'grid' ? (

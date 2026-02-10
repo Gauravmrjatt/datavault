@@ -28,11 +28,11 @@ export function FileGrid({
   onFolderAction,
 }: FileGridProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols- p-4">
       {folders.map((folder) => (
         <FolderCard
           key={folder._id}
-          folder={folder}
+          folder={folder}ƒ
           onClick={() => onFolderClick(folder._id)}
           selected={selectedFolders.includes(folder._id)}
           onSelect={(checked) => onFolderSelect(folder._id, checked)}

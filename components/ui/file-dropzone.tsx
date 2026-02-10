@@ -20,7 +20,7 @@ export function FileDropzone({
   onFilesDropped,
   accept,
   multiple = true,
-  maxSize = 10 * 1024 * 1024, // 10MB
+  maxSize = 1000 * 1024 * 1024, // 10MB
   maxFiles = 10,
   disabled = false,
   className,

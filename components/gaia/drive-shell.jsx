@@ -27,9 +27,9 @@ export function DriveShell({ children }) {
   const { logout, user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--gaia-bg))] transition-colors pb-20 md:pb-0">
+    <div className="min-h-screen bg-[hsl(var(--gaia-surface))] transition-colors pb-20 md:pb-0">
       {/* MOBILE HEADER */}
-      <header className="flex items-center justify-center p-4 md:hidden relative">
+      {/* <header className="flex items-center justify-center p-4 md:hidden relative">
         <h2 className="text-xl font-bold tracking-tight text-[hsl(var(--gaia-accent))]">
           DataVault
         </h2>
@@ -41,11 +41,11 @@ export function DriveShell({ children }) {
             <LogOut size={20} />
           </button>
         </div>
-      </header>
+      </header> */}
 
-      <div className="mx-auto flex w-full flex-col gap-4 p-4 md:flex-row">
+      <div style={{height : "100vh"}} className="mx-auto flex w-full flex-col gap-4 md:flex-row min-h-100vh h-full">
         {/* SIDEBAR (Desktop) */}
-        <aside className="hidden md:flex w-full shrink-0 flex-col rounded-[2rem] border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-panel))] p-6 md:sticky md:top-4 md:h-[calc(100dvh-2rem)] md:w-64">
+        <aside className="hidden md:flex w-full shrink-0 flex-col rounded-r-[2rem] border-0 border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-panel))] p-6 md:sticky md:top-4 md:h-[calc(100dvh-2rem)] min-h-100vh md:w-64">
           
           {/* USER CARD (TOP) */}
           <div className="mb-6">
@@ -101,7 +101,7 @@ export function DriveShell({ children }) {
         </aside>
 
         {/* MAIN */}
-        <main className="flex-1 min-h-[calc(100dvh-2rem)] rounded-[2.5rem] border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-surface))] p-4 md:p-6 shadow-sm">
+        <main className="flex-1 min-h-[calc(100dvh-2rem)] bg-[hsl(var(--gaia-surface))]  p-4 md:p-6 shadow-sm">
           {children}
         </main>
       </div>

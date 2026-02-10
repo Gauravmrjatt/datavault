@@ -38,19 +38,8 @@ export function FileList({
   onFolderAction,
 }: FileListProps) {
   return (
-    <GaiaCard className="overflow-hidden p-0">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-[hsl(var(--gaia-soft))] text-[hsl(var(--gaia-muted))]">
-          <tr>
-            <th className="w-8 p-3">
-               {/* Header checkbox could go here */}
-            </th>
-            <th className="p-3 font-medium">Name</th>
-            <th className="hidden p-3 font-medium sm:table-cell">Size</th>
-            <th className="hidden p-3 font-medium md:table-cell">Modified</th>
-            <th className="w-10 p-3"></th>
-          </tr>
-        </thead>
+    
+      <table className="w-full text-left text-sm ">
         <tbody className="divide-y divide-[hsl(var(--gaia-border))]">
           {folders.map((folder) => (
             <tr
@@ -197,6 +186,6 @@ export function FileList({
            )}
         </tbody>
       </table>
-    </GaiaCard>
+    
   );
 }

@@ -77,7 +77,7 @@ export function FileManagerToolbar({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <GaiaButton variant="ghost" className="h-10 w-10 p-0 md:w-auto md:px-3">
+            <GaiaButton variant="ghost" className="h-10 w-10 p-0 w-auto md:px-3">
               <Filter className="h-4 w-4 md:mr-2" />
               <span className="hidden md:inline">{filter || "Filter"}</span>
             </GaiaButton>
@@ -94,7 +94,7 @@ export function FileManagerToolbar({
         </DropdownMenu>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 justify-between">
         <div className="flex items-center rounded-xl border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-panel))] p-1">
           <button
             onClick={() => onViewChange("grid")}
@@ -131,7 +131,7 @@ export function FileManagerToolbar({
           <DropdownMenuTrigger asChild className="md:hidden">
             <GaiaButton variant="primary" className="px-3"><Plus className="h-4 w-4" /></GaiaButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="brounded-[2rem] border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-surface))] p-3 group relative flex flex-col justify-between overflow-hidden transition-all hover:scale-[1.02]">
             <DropdownMenuItem onClick={onUpload}>
               <UploadCloud className="mr-2 h-4 w-4" /> Upload File
             </DropdownMenuItem>

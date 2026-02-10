@@ -55,7 +55,7 @@ export function FileCard({
             }}
         >
             <div className="flex items-start justify-between p-1">
-                <div className={cn('flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--gaia-soft))] shadow-sm')}>
+                <div className={cn('flex h-12 w-12 items-center justify-center rounded-xl bg-transparent shadow-sm')}>
                     <Icon icon={iconName} className="h-8 w-8" />
                 </div>
                 
@@ -66,7 +66,7 @@ export function FileCard({
                                 <MoreVertical className="h-4 w-4" />
                             </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w- brounded-[2rem] border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-surface))] p-3 group relative flex flex-col justify-between overflow-hidden transition-all hover:scale-[1.02]">
+                        <DropdownMenuContent align="end" className="brounded-[2rem] border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-surface))] p-3 group relative flex flex-col justify-between overflow-hidden transition-all hover:scale-[1.02]">
                             {onPreview && (
                                 <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onPreview(); }}>
                                     <Eye className="mr-2 h-4 w-4" /> Preview

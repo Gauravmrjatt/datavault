@@ -4,8 +4,8 @@ export function GaiaCard({ className, ...props }) {
   return (
     <div
       className={cn(
+        className,
         'rounded-[2rem] border border-[hsl(var(--gaia-border))] bg-[hsl(var(--gaia-surface))] p-4 shadow-xl shadow-[hsl(var(--gaia-accent)/0.03)]',
-        className
       )}
       {...props}
     />
