@@ -1,4 +1,24 @@
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: datavault-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb+srv://Vercel-Admin-datavault:Xcu2GgjJtL6nffBI@datavault.191yh79.mongodb.net/?retryWrites=true&w=majority
+      - PORT=5000
+      - NODE_ENV=production
+      - JWT_SECRET=change-me-for-local-testing
+      - BOT_TOKEN=123456:dummy-token-for-local-run
+      - TELEGRAM_STORAGE_CHAT_ID=@dummy_storage_chat
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/tmp:/app/tmp
+
   mongodb:
     image: mongo:7
     container_name: datavault-mongodb
