@@ -493,3 +493,12 @@ Contributions welcome! Please open an issue or submit a pull request.
 ---
 
 **Built with ❤️ using Next.js, Express, MongoDB, and Telegram**
+
+```bash
+PORT=XXX
+JWT_SECRET=XXX
+MONGODB_URI=XXX
+BOT_TOKEN=XXX
+CHANNEL_USERNAME=XXX
+FRONTEND_URL=XXX
+```
