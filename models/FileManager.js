@@ -36,6 +36,11 @@ const FileManagerSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
+    folder_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Folder',
+        default: null
+    },
     isPublic: {
         type: Boolean,
         default: false
