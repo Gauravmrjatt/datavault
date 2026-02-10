@@ -9,7 +9,10 @@ const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space
 
 export const metadata = {
   title: 'Data Vault',
-  description: 'Telegram-backed production cloud file manager'
+  description: 'Telegram-backed production cloud file manager',
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({ children }) {
