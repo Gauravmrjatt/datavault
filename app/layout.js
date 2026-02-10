@@ -1,29 +1,28 @@
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { AuthProvider } from "@/contexts/auth-context"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/toaster"
+import { Manrope, Space_Grotesk } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from '@/contexts/auth-context';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 
-const inter = Inter({ subsets: ["latin"] })
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
 
 export const metadata = {
-  title: "DataVault - Secure File Management",
-  description: "Upload, store, and share your files securely with DataVault",
-}
+  title: 'Data Vault',
+  description: 'Telegram-backed production cloud file manager'
+};
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <ThemeProvider
-        defaultTheme="light"
-      >
-        <body className={inter.className}>
+      <body className={`${manrope.variable} ${spaceGrotesk.variable} font-[var(--font-manrope)]`}>
+        <ThemeProvider>
           <AuthProvider>
             {children}
             <Toaster />
           </AuthProvider>
-        </body>
-      </ThemeProvider>
+        </ThemeProvider>
+      </body>
     </html>
-  )
+  );
 }

@@ -1,0 +1,21 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: datavault-mongodb
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: datavault
+      MONGO_INITDB_ROOT_PASSWORD: datavault_password
+      MONGO_INITDB_DATABASE: datavault
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongodb_data:

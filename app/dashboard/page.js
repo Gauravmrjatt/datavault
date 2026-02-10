@@ -1,235 +1,147 @@
-'use client'
-import React, { useState, useEffect } from "react"
-import Link from "next/link"
-import { FileText, Upload, CloudDownload } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/contexts/auth-context"
-const apiBackend = process.env.NEXT_PUBLIC_API_BACKEND || "https://datahub.dream10.in";
+"use client";
 
-// Skeleton component for loading states
-const Skeleton = ({ className }) => (
-  <div className={`animate-pulse bg-muted ${className}`} />
-)
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Activity, Database, HardDrive, RefreshCw } from 'lucide-react';
+import { GaiaBadge, GaiaButton, GaiaCard } from '@/components/gaia/primitives';
+import { useAuth } from '@/contexts/auth-context';
+import { apiRequest } from '@/lib/api-client';
 
-// Utility to format storage size into appropriate units
-function formatStorage(size) {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
-  let unitIndex = 0
-  let formattedSize = Number(size)
-  while (formattedSize >= 1024 && unitIndex < units.length - 1) {
-    formattedSize /= 1024
-    unitIndex++
+function human(bytes = 0) {
+  const val = Number(bytes);
+  if (!val || isNaN(val)) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let value = val;
+  let index = 0;
+  while (value >= 1024 && index < units.length - 1) {
+    value /= 1024;
+    index += 1;
   }
-  return `${formattedSize.toFixed(1)} ${units[unitIndex]}`
+  return `${value.toFixed(1)} ${units[index]}`;
 }
 
-export default function Dashboard() {
-  const [storageData, setStorageData] = useState({ used: BigInt(0), total: BigInt(1) })
-  const [recentFiles, setRecentFiles] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const { user, logout } = useAuth()
+export default function DashboardPage() {
+  const { token, user } = useAuth();
+  const [stats, setStats] = useState({ usedBytes: 0, totalFiles: 0, folders: 0 });
+  const [loading, setLoading] = useState(true);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    try {
+      const payload = await apiRequest('/api/drive/items', { token });
+      setStats({
+        usedBytes: payload.stats.usedBytes,
+        totalFiles: payload.stats.totalFiles,
+        folders: payload.folders.length
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!user) return
+    if (token) fetchStats();
+  }, [token]);
 
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(`${apiBackend}/api/file/my-files`, {
-          headers: {
-            Authorization: `Bearer ${user}`
-          }
-        })
-
-        if (response.status === 401) {
-          logout() // call your logout function here
-          return
-        }
-
-        if (!response.ok) throw new Error('Failed to fetch data')
-
-        const data = await response.json()
-
-        setStorageData({
-          used: BigInt(data.stats?.storageUsed || data.stats?.totalStorage || '0'),
-          total: BigInt(data.stats?.storageTotal || '1099511627776') // 1TB default
-        })
-
-        setRecentFiles(data.data || [])
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [user])
-
-
-  // Calculate percentage using Number conversion for display
-  const storagePercentage = (Number(storageData.used) / Number(storageData.total)) * 100
-
-  // Convert storage to readable format
-  const usedStorage = formatStorage(storageData.used)
-  const totalStorage = formatStorage(storageData.total)
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i}>
-              <CardHeader className="pb-2">
-                <Skeleton className="h-6 w-24" />
-                <Skeleton className="h-4 w-32" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-16" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-32" />
-            <Skeleton className="h-4 w-48" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-8 w-8" />
-                    <div>
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-24 mt-1" />
-                    </div>
-                  </div>
-                  <Skeleton className="h-8 w-8" />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  if (error) {
-    return <div className="text-destructive text-center">{error}</div>
-  }
+  const percent = user?.quotaBytes ? Math.min((stats.usedBytes / user.quotaBytes) * 100, 100) : 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <Button asChild>
-          <Link href="/dashboard/upload">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload File
-          </Link>
-        </Button>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-12 py-4">
+      <header className="flex items-end justify-between">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">Overview</h1>
+          <p className="text-[hsl(var(--gaia-muted))] mt-1">Your decentralized storage at a glance.</p>
+        </div>
+        <GaiaButton variant="ghost" onClick={fetchStats} disabled={loading} className="rounded-2xl h-12 px-6">
+          <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          <span className="ml-2">Sync</span>
+        </GaiaButton>
+      </header>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Storage</CardTitle>
-            <CardDescription>Your storage usage</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-medium">
-                {usedStorage} of {totalStorage} used
-              </span>
-              <span className="text-sm font-medium">{storagePercentage.toFixed(0)}%</span>
+      {/* Main Visual Focus: Storage Laser */}
+      <section className="relative group">
+        <GaiaCard className="p-8 border-none bg-gradient-to-br from-[hsl(var(--gaia-panel))] to-[hsl(var(--gaia-surface))] shadow-2xl overflow-hidden laser-focus">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium uppercase tracking-widest text-[hsl(var(--gaia-muted))]">Storage Capacity</p>
+                <h2 className="text-5xl font-black tabular-nums">
+                  {human(stats.usedBytes)} <span className="text-xl font-normal text-[hsl(var(--gaia-muted))]">/ {human(user?.quotaBytes || 0)}</span>
+                </h2>
+              </div>
+              <div className="flex items-center gap-4">
+                 <GaiaBadge className="px-3 py-1 text-sm bg-[hsl(var(--gaia-accent)/0.1)] text-[hsl(var(--gaia-accent))] border border-[hsl(var(--gaia-accent)/0.2)]">
+                   {percent.toFixed(1)}% Used
+                 </GaiaBadge>
+                 <span className="text-xs text-[hsl(var(--gaia-muted))]">Distributed across Telegram clusters</span>
+              </div>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div className="h-full bg-primary" style={{ width: `${storagePercentage}%` }} />
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Files</CardTitle>
-            <CardDescription>Total files in your account</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <FileText className="h-8 w-8 text-muted-foreground" />
-              <span className="text-3xl font-bold">{recentFiles.length}</span>
+            <div className="relative w-48 h-48 flex items-center justify-center">
+              <svg className="w-full h-full transform -rotate-90">
+                <circle
+                  cx="96" cy="96" r="80"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="transparent"
+                  className="text-[hsl(var(--gaia-soft))]"
+                />
+                <circle
+                  cx="96" cy="96" r="80"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="transparent"
+                  strokeDasharray={502.4}
+                  strokeDashoffset={502.4 - (502.4 * percent) / 100}
+                  strokeLinecap="round"
+                  className="text-[hsl(var(--gaia-accent))] transition-all duration-1000 ease-out"
+                  style={{ filter: 'drop-shadow(0 0 8px hsl(var(--gaia-accent)))' }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <HardDrive className="text-[hsl(var(--gaia-accent))] mb-1" size={32} />
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2">
-            <Button asChild variant="outline" className="justify-start">
-              <Link href="/dashboard/upload">
-                <Upload className="mr-2 h-4 w-4" />
-                Upload File
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="justify-start">
-              <Link href="/dashboard/files">
-                <FileText className="mr-2 h-4 w-4" />
-                View All Files
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Files</CardTitle>
-          <CardDescription>Recently uploaded or modified files</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {recentFiles.length === 0 ? (
-            <p className="text-center text-muted-foreground">No recent files</p>
-          ) : (
-            <div className="space-y-2">
-              {recentFiles.map((file) => (
-                <div key={file._id} className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-8 w-8 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">{file.original_name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Downloads: {file.download || 0} • {new Date(file.updatedAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="icon">
-                    <a download href={`${apiBackend}/api/file/download/${file.message_id}?token=${user}`} target="_blank" rel="noopener noreferrer">
-                      <CloudDownload size={20} />
-                      <span className="sr-only">Download</span>
-                    </a>
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="mt-4 text-center">
-            <Button asChild variant="link">
-              <Link href="/dashboard/files">View all files</Link>
-            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </GaiaCard>
+      </section>
+
+      <div className="grid gap-6 md:grid-cols-2">
+         <Metric icon={Database} label="Total Assets" value={String(stats.totalFiles)} sub="Individual files stored" />
+         <Metric icon={Activity} label="Directory Structure" value={String(stats.folders)} sub="Organized folders" />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3 pt-4">
+        <Quick href="/dashboard/files" title="Drive Explorer" description="Browse and manage files" />
+        <Quick href="/dashboard/upload" title="Upload Center" description="Add new content" />
+        <Quick href="/dashboard/settings" title="Configuration" description="Account and node settings" />
+      </div>
     </div>
-  )
+  );
+}
+
+function Metric({ icon: Icon, label, value, sub }) {
+  return (
+    <GaiaCard className="flex items-center gap-6 p-6 border-[hsl(var(--gaia-border)/0.5)]">
+      <div className="p-4 rounded-2xl bg-[hsl(var(--gaia-soft))] text-[hsl(var(--gaia-accent))]">
+        <Icon size={24} />
+      </div>
+      <div>
+        <p className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--gaia-muted))]">{label}</p>
+        <p className="text-3xl font-bold mt-0.5">{value}</p>
+        <p className="text-xs text-[hsl(var(--gaia-muted))] mt-1">{sub}</p>
+      </div>
+    </GaiaCard>
+  );
+}
+
+function Quick({ href, title, description }) {
+  return (
+    <Link href={href}>
+      <GaiaCard className="h-full p-6 transition-all hover:scale-[1.02] hover:shadow-xl border-transparent hover:border-[hsl(var(--gaia-accent)/0.3)] bg-[hsl(var(--gaia-panel))]">
+        <p className="font-bold text-lg">{title}</p>
+        <p className="mt-1 text-sm text-[hsl(var(--gaia-muted))] leading-relaxed">{description}</p>
+      </GaiaCard>
+    </Link>
+  );
 }
