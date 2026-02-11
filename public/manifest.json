@@ -1,21 +1,43 @@
 {
-  "name": "Data Vault",
+  "name": "DataVault - Cloud Storage",
   "short_name": "DataVault",
-  "description": "Telegram-backed production cloud file manager",
+  "description": "Telegram-backed production cloud file manager with unlimited storage",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "/favicon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/favicon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Upload Files",
+      "short_name": "Upload",
+      "description": "Upload new files to DataVault",
+      "url": "/dashboard/upload",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Files",
+      "short_name": "Files",
+      "description": "Browse your files",
+      "url": "/dashboard/files",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
     }
   ]
 }

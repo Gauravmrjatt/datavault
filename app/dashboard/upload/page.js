@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 import { getFileIcon } from '@/lib/file-utils';
 import { FileDropzone } from '@/components/ui/file-dropzone';
+import { UploadSkeleton } from '../loading-skeletons/upload-skeleton';
 
 const CHUNK_SIZE = 5 * 1024 * 1024;
 const MAX_RETRIES = 3;
@@ -29,12 +30,19 @@ function human(bytes = 0) {
 export default function UploadManagerPage() {
   const { token } = useAuth();
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const fileInput = useRef(null);
   const tasksRef = useRef([]);
 
   useEffect(() => {
     tasksRef.current = tasks;
   }, [tasks]);
+
+  useEffect(() => {
+    if (token) {
+      setLoading(false);
+    }
+  }, [token]);
 
   const addFiles = (files) => {
     const next = Array.from(files).map((file) => {
@@ -186,6 +194,10 @@ export default function UploadManagerPage() {
     if (!tasks.length) return 0;
     return Math.round(tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length);
   }, [tasks]);
+
+  if (loading) {
+    return <UploadSkeleton />;
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 py-4">

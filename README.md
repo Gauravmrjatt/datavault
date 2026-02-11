@@ -481,6 +481,56 @@ async function uploadFile(file) {
 - ✅ **Quota Management**: Per-user storage limits
 - ✅ **Encryption**: Secure storage of credentials
 - ✅ **Modern UI**: Next.js with Tailwind CSS
+- ✅ **PWA Support**: Install as native app with offline capabilities
+- ✅ **Skeleton Loading**: Smooth loading experience on all pages
+
+## 📱 Progressive Web App (PWA)
+
+DataVault is a fully-featured Progressive Web App that can be installed on any device:
+
+### PWA Features
+
+- **📲 Installable**: Add to home screen on mobile or desktop
+- **⚡ Fast Loading**: Aggressive caching for instant page loads
+- **🔌 Offline Support**: Works without internet connection
+- **🔔 Install Prompt**: Smart prompt to install the app
+- **📊 Offline Indicator**: Visual feedback when connection is lost
+- **🚀 App Shortcuts**: Quick access to Upload and Files from home screen
+
+### Installing the PWA
+
+#### Desktop (Chrome, Edge, Brave)
+1. Visit the app in your browser
+2. Look for the install icon (⊕) in the address bar
+3. Click "Install" to add to your desktop
+4. Launch from your applications menu
+
+#### Mobile (iOS Safari)
+1. Open the app in Safari
+2. Tap the Share button
+3. Select "Add to Home Screen"
+4. Tap "Add" to install
+
+#### Mobile (Android Chrome)
+1. Open the app in Chrome
+2. Tap the menu (⋮)
+3. Select "Install app" or "Add to Home Screen"
+4. Tap "Install"
+
+### Testing PWA Features
+
+```bash
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Test offline mode
+# 1. Open DevTools → Network
+# 2. Select "Offline" throttling
+# 3. Navigate the app (cached pages work offline)
+```
 
 ## 📝 License
 
