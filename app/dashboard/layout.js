@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DriveShell } from '@/components/gaia/drive-shell';
 import { useAuth } from '@/contexts/auth-context';
-
+import {DashboardSkeleton} from "@/app/dashboard/loading-skeletons/dashboard-skeleton"
 export default function DashboardLayout({ children }) {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }) {
   }, [loading, user, router]);
 
   if (loading || !user) {
-    return <div className="p-10 text-sm">Loading session...</div>;
+    return <DashboardSkeleton/>;
   }
 
   return <DriveShell>{children}</DriveShell>;
