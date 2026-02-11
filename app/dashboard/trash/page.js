@@ -57,20 +57,26 @@ export default function TrashPage() {
             </GaiaCard>
           ))}
         </div>
-      ) : files.map((file) => (
-        <GaiaCard key={file._id} className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="font-medium">{file.name}</p>
-            <GaiaBadge>{new Date(file.trashedAt || file.updatedAt).toLocaleString()}</GaiaBadge>
-          </div>
-          <div className="flex gap-2">
-            <GaiaButton variant="ghost" onClick={() => restore(file._id)}>Restore</GaiaButton>
-            <GaiaButton variant="danger" onClick={() => removeForever(file._id)}>Delete forever</GaiaButton>
-          </div>
-        </GaiaCard>
-      ))}
-
-      {!files.length ? <GaiaCard>Trash is empty.</GaiaCard> : null}
+      ) : (
+        <>
+          {files.length > 0 ? (
+            files.map((file) => (
+              <GaiaCard key={file._id} className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="font-medium">{file.name}</p>
+                  <GaiaBadge>{new Date(file.trashedAt || file.updatedAt).toLocaleString()}</GaiaBadge>
+                </div>
+                <div className="flex gap-2">
+                  <GaiaButton variant="ghost" onClick={() => restore(file._id)}>Restore</GaiaButton>
+                  <GaiaButton variant="danger" onClick={() => removeForever(file._id)}>Delete forever</GaiaButton>
+                </div>
+              </GaiaCard>
+            ))
+          ) : (
+            <GaiaCard>Trash is empty.</GaiaCard>
+          )}
+        </>
+      )}
     </div>
   );
 }

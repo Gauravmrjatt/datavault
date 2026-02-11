@@ -17,9 +17,17 @@ export function UploadProvider({ children }) {
   const [isMinimized, setIsMinimized] = useState(true);
   const tasksRef = useRef([]);
   const activeUploadsRef = useRef(new Set());
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we're on the client before accessing localStorage
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Load tasks from localStorage on mount
   useEffect(() => {
+    if (!isClient) return;
+    
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -29,37 +37,50 @@ export function UploadProvider({ children }) {
         const filtered = parsed.filter(t => 
           t.status !== 'completed' || (t.completedAt && t.completedAt > oneHourAgo)
         );
-        setTasks(filtered);
+        // Remove file objects as they can't be serialized
+        const sanitized = filtered.map(t => ({ ...t, file: null }));
+        setTasks(sanitized);
       }
     } catch (error) {
       console.error('Failed to load upload queue:', error);
     }
-  }, []);
+  }, [isClient]);
 
   // Save tasks to localStorage whenever they change
   useEffect(() => {
+    if (!isClient) return;
+    
     tasksRef.current = tasks;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      // Remove file objects before saving to localStorage
+      const serializable = tasks.map(t => {
+        const { file, ...rest } = t;
+        return rest;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
     } catch (error) {
       console.error('Failed to save upload queue:', error);
     }
-  }, [tasks]);
+  }, [tasks, isClient]);
 
   // Auto-resume incomplete uploads when token is available
   useEffect(() => {
-    if (!token) return;
+    if (!token || !isClient) return;
     
     const incompleteUploads = tasks.filter(
-      t => t.status === 'uploading' || t.status === 'queued'
+      t => (t.status === 'uploading' || t.status === 'queued') && t.uploadId && t.fileId
     );
     
-    incompleteUploads.forEach(task => {
-      if (!activeUploadsRef.current.has(task.id)) {
-        setTimeout(() => runTask(task.id), 100);
-      }
-    });
-  }, [token]);
+    // Can't resume uploads without file data
+    if (incompleteUploads.length > 0) {
+      // Mark them as paused since we can't resume without file data
+      setTasks(prev => prev.map(t => 
+        incompleteUploads.find(u => u.id === t.id) 
+          ? { ...t, status: 'paused', error: 'Resume not available - file data lost' }
+          : t
+      ));
+    }
+  }, [token, isClient]);
 
   const uploadChunkWithRetry = async (fileId, uploadId, chunkIndex, buffer) => {
     let attempt = 0;
@@ -88,7 +109,14 @@ export function UploadProvider({ children }) {
     if (activeUploadsRef.current.has(taskId)) return;
     
     const task = tasksRef.current.find((t) => t.id === taskId);
-    if (!task || task.status === 'completed') return;
+    if (!task || task.status === 'completed' || !task.file) {
+      if (task && !task.file) {
+        setTasks((prev) => prev.map((t) => 
+          t.id === taskId ? { ...t, status: 'error', error: 'File data not available' } : t
+        ));
+      }
+      return;
+    }
 
     activeUploadsRef.current.add(taskId);
     setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: 'uploading', error: null } : t)));
@@ -128,7 +156,6 @@ export function UploadProvider({ children }) {
         const start = chunkIndex * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, task.size);
         
-        // For resumed uploads, we need to reconstruct the file from stored data
         if (!task.file) {
           throw new Error('File data not available for upload');
         }
@@ -165,6 +192,8 @@ export function UploadProvider({ children }) {
   };
 
   const addFiles = (files) => {
+    if (!files || files.length === 0) return;
+    
     const next = Array.from(files).map((file) => {
       const ext = file.name.split('.').pop() || '';
       return {
@@ -202,7 +231,7 @@ export function UploadProvider({ children }) {
       
       const newTasks = prev.map((t) => (t.id === taskId ? { ...t, paused: !isCurrentlyPaused, status: nextStatus } : t));
       
-      if (isCurrentlyPaused) {
+      if (isCurrentlyPaused && task.file) {
         setTimeout(() => runTask(taskId), 0);
       }
       
@@ -220,6 +249,12 @@ export function UploadProvider({ children }) {
   };
 
   const retryTask = (taskId) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task || !task.file) {
+      toast.error('Cannot retry - file data not available');
+      return;
+    }
+    
     setTasks((prev) => prev.map((t) => 
       t.id === taskId ? { ...t, status: 'queued', error: null, progress: 0 } : t
     ));

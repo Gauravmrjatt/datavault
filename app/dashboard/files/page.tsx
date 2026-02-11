@@ -332,7 +332,7 @@ export default function DriveFilesPage() {
     }
   };
 
-  if (loading && files.length === 0 && folders.length === 0) {
+  if (loading) {
     return <FilesSkeleton />;
   }
 
