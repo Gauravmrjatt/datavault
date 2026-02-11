@@ -5,6 +5,7 @@ import { GaiaBadge, GaiaButton, GaiaCard, GaiaInput } from '@/components/gaia/pr
 import { GaiaThemeSwitcher } from '@/components/gaia/theme-switcher';
 import { useAuth } from '@/contexts/auth-context';
 import { apiRequest } from '@/lib/api-client';
+import { SettingsSkeleton } from '../loading-skeletons/settings-skeleton';
 
 export default function SettingsPage() {
   const { user, token } = useAuth();
@@ -14,16 +15,19 @@ export default function SettingsPage() {
   const [source, setSource] = useState('none');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!token) return;
+    setLoading(true);
     apiRequest('/api/drive/telegram-config', { token })
       .then((payload) => {
         setConfigured(payload.configured);
         setSource(payload.source || 'none');
         setStorageChatId(payload.storageChatId || '');
       })
-      .catch((error) => setMessage(error.message));
+      .catch((error) => setMessage(error.message))
+      .finally(() => setLoading(false));
   }, [token]);
 
   const saveConfig = async () => {
@@ -48,6 +52,10 @@ export default function SettingsPage() {
       setSaving(false);
     }
   };
+
+  if (loading && !configured && source === 'none') {
+    return <SettingsSkeleton />;
+  }
 
   return (
     <div className="space-y-4">

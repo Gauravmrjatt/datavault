@@ -23,7 +23,18 @@ export default function SharePage({ params }) {
   }
 
   if (!payload) {
-    return <div className="p-6 text-sm">Loading shared file...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--gaia-bg))] p-4">
+        <GaiaCard className="w-full max-w-lg space-y-4">
+          <div className="space-y-2">
+            <div className="h-4 w-20 bg-muted animate-pulse rounded" />
+            <div className="h-8 w-3/4 bg-muted animate-pulse rounded" />
+            <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+          </div>
+          <div className="h-10 w-28 bg-muted animate-pulse rounded mt-4" />
+        </GaiaCard>
+      </div>
+    );
   }
 
   return (

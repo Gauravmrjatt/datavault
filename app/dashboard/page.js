@@ -6,6 +6,7 @@ import { Activity, Database, HardDrive, RefreshCw } from 'lucide-react';
 import { GaiaBadge, GaiaButton, GaiaCard } from '@/components/gaia/primitives';
 import { useAuth } from '@/contexts/auth-context';
 import { apiRequest } from '@/lib/api-client';
+import { DashboardSkeleton } from './loading-skeletons/dashboard-skeleton';
 
 function human(bytes = 0) {
   const val = Number(bytes);
@@ -44,6 +45,10 @@ export default function DashboardPage() {
   }, [token]);
 
   const percent = user?.quotaBytes ? Math.min((stats.usedBytes / user.quotaBytes) * 100, 100) : 0;
+
+  if (loading && stats.totalFiles === 0) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 py-4">

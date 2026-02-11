@@ -18,6 +18,7 @@ import { FileList as FileListView } from '@/components/file-manager/file-list';
 import { FolderBreadcrumbs } from '@/components/folder-breadcrumbs';
 import { UploadDialog } from '@/components/file-manager/upload-dialog';
 import { FileDropzone } from '@/components/ui/file-dropzone';
+import { FilesSkeleton } from '../loading-skeletons/files-skeleton';
 
 type UploadInlineTask = {
   id: string;
@@ -45,6 +46,7 @@ export default function DriveFilesPage() {
   
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   
   const [previewFile, setPreviewFile] = useState<FileWithMetadata | null>(null);
   const [shareFile, setShareFile] = useState<FileWithMetadata | null>(null);
@@ -54,6 +56,7 @@ export default function DriveFilesPage() {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
   const refresh = async (folderId = currentFolderId) => {
+    setLoading(true);
     try {
       const query = folderId ? `?folderId=${folderId}` : '';
       const payload = await apiRequest(`/api/drive/items${query}`, { token });
@@ -67,6 +70,8 @@ export default function DriveFilesPage() {
     } catch (error) {
       console.error("Failed to load drive items:", error);
       toast.error("Failed to load files");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -326,6 +331,10 @@ export default function DriveFilesPage() {
        toast.success(`Started download for ${selectedFiles.length} files`);
     }
   };
+
+  if (loading && files.length === 0 && folders.length === 0) {
+    return <FilesSkeleton />;
+  }
 
   return (
     <div className="flex h-full flex-col space-y-4">
