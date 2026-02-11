@@ -1,10 +1,12 @@
 import { Manrope, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/auth-context';
+import { UploadProvider } from '@/contexts/upload-context';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { PWAInstallPrompt } from '@/components/pwa-install-prompt';
 import { OfflineIndicator } from '@/components/offline-indicator';
+import { UploadStatusPopup } from '@/components/upload-status-popup';
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
@@ -43,10 +45,13 @@ export default function RootLayout({ children }) {
       <body className={`${manrope.variable} ${spaceGrotesk.variable} font-[var(--font-manrope)]`}>
         <ThemeProvider>
           <AuthProvider>
-            {children}
-            <Toaster />
-            <OfflineIndicator />
-            <PWAInstallPrompt />
+            <UploadProvider>
+              {children}
+              <Toaster />
+              <OfflineIndicator />
+              <PWAInstallPrompt />
+              <UploadStatusPopup />
+            </UploadProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
