@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef , useState } from 'react';
 import { Pause, Play, RotateCcw, UploadCloud, X } from 'lucide-react';
 import { Icon } from '@iconify/react';
 import { GaiaButton, GaiaCard } from '@/components/gaia/primitives';
