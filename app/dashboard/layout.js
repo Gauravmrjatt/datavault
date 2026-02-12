@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DriveShell } from '@/components/gaia/drive-shell';
@@ -18,6 +17,5 @@ export default function DashboardLayout({ children }) {
   if (loading || !user) {
     return <DashboardSkeleton/>;
   }
-
   return <DriveShell>{children}</DriveShell>;
 }
